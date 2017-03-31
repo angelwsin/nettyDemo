@@ -52,6 +52,7 @@ public class MutiplexerTimeServer implements Runnable{
 					    try {
 							handlerInput(key);
 						} catch (Exception e) {
+						    e.printStackTrace();
 							// TODO: handle exception
 							if(key!=null){
 								key.cancel();
@@ -96,11 +97,13 @@ public class MutiplexerTimeServer implements Runnable{
 		  }
 	}
 	
+	//写时 tcp缓存区满了 可能出现半包问题  要注册写事件 循环写
 	private void  doWriter(SocketChannel sc ,String response)throws IOException{
 		    if(response!=null&&response.trim().length()>0){
+		        System.out.println(response);
 		    	byte[] bytes = response.getBytes();
 		    	ByteBuffer  writerBuffer=ByteBuffer.allocate(bytes.length);
-		    	writerBuffer.put(writerBuffer);
+		    	writerBuffer.put(bytes);
 		    	writerBuffer.flip();
 		    	sc.write(writerBuffer);
 		    	

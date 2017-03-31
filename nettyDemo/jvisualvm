@@ -1,1 +1,123 @@
 jdk自带有个jvisualvm工具、该工具是用来监控java运行程序的cpu、内存、线程等的使用情况
+
+I/o概念
+
+内核区，用户区
+文件描述 fd
+
+数据先进入内核的缓存区 ，再由内核缓存区复制到应用程序的缓冲区
+
+1)bio
+  读写操作都是阻塞的，当读的时候，会一直阻塞在等待把内核中的缓存复制到应用程序的缓存中
+2)nio  event driver IO
+ select/poll   把一个和多个fd传递给select,阻塞在select上，select/poll就可以监听多个fd是否就绪，select不知道是什么状态的就绪 顺序扫描遍历fd
+ epoll         epool是基于事件驱动的方式代替顺序扫描       java的selector 的实现
+3)aio
+ 告知内核启动某个操作并让内核在整个操作完成后通知应用程序
+
+ 
+ 
+ 
+ java nio  组件
+ 
+ channels
+ buffers
+ selector
+ 
+ 
+ channel 和 buffer
+ 
+ nio从channel开始     channel 写入buffer      channel也可以从buffer中读
+ 
+ channel
+ FileChannel
+ DatagramChannel
+ SocketChannel
+ ServerSocketChannel  监听tcp，每接受一个客户端创建一个 SocketChannel
+ 
+ buffer
+ ByteBuffer
+ DoubleBuffer
+ CharBuffer
+ IntBuffer
+ FloatBuffer
+ LongBuffer
+ ShortBuffer
+ 
+ selector
+ Selector允许单线程处理多个channel,把channel注册到Selector上
+ 事件类型
+ OP_ACCEPT  服务端接受客户端的连接事件
+ OP_CONNECT 客户端连接服务端事件
+ OP_READ    读事件
+ OP_WRITE   写事件
+ 
+ 
+ buffer
+ 读写步骤
+ 1.把数据写入到Buffer
+ 2.调用filp方法 (切换读写模式)
+ 3.从Buffer中读取数据
+ 4.调用clear方法和compact方法 清空缓存
+ 
+ buffer的属性
+ capacity,position 和 limit
+ 
+ position 和 limit 读写模式下不同，capacity不变
+ 
+ capacity  buffer的大小
+ position  当写数据时代表当前的位置，初始为0，写入会移动到下一个可写的buffer 最大为capacity-1
+                                  当读数据表示指定位置读，当从写模式切换到读模式，position 重置为0
+ limit      写模式 代表能写多少  limit ==capacity
+                                    读模式 代表能读多少  limit ==写模式的position
+                                    
+buffer的方法
+filp() 从写模式切换到读模式   position=0，limit==写模式的position
+rewind() 将 position=0，limit不变从新读取数据
+clear()  清理所有数据
+compact() 清理读过的数据，未读的数据移动buffer前面
+mark()    标记buffer中的一个特定的position  reset()可以恢复到这个position
+
+
+selector
+
+1.Selector.open()创建Selector
+2.channel注册到Selector channel必须是非阻塞的
+ 注册指定感兴趣的事件
+ OP_ACCEPT  服务端接受客户端的连接事件
+ OP_CONNECT 客户端连接服务端事件
+ OP_READ    读事件
+ OP_WRITE   写事件
+ channel注册到Selector 返回SelectorKey
+ SelectorKey的属性
+ ready集合  通道已经就绪的集合
+ channel
+ 3.Selector.select()阻塞
+  selector.seletedKeys() 返回 已经就绪的channel
+  selectionKey.isAcceptable()
+  selectionKey.isConnectable()
+  selectionKey.isReadable()
+  selectionKey.isWritable()
+  检查那种事件就绪
+ 4.selector.close()关闭selector 但是channel不关闭
+ 
+ SocketChannel
+ socketChannel.open()
+ 
+ socketChannel.connect() 该方法在建立连接之前就返回了，可以socketChannel.finishConnect() 检查
+ socketChannel.close()
+ 
+ 
+ ServerSocketChannel
+  
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
