@@ -56,7 +56,7 @@ public class AsynTimerClientHandler implements  CompletionHandler<Void, AsynTime
                              byte[] b  = new byte[buf.remaining()];
                              buf.get(b);
                              System.out.println(new String(b));
-                             attachment.latch.countDown();
+                             //attachment.latch.countDown();
                             
                         }
 

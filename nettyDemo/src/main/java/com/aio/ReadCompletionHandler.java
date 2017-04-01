@@ -21,6 +21,7 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
         ByteBuffer  buffer = (ByteBuffer) attachment;
         buffer.flip();
         byte[]  b = new byte[buffer.remaining()];
+        buffer.get(b);
         String body = new String(b);
         System.out.println("THIS  server receiver  content "+body);
         String currentTime  ="QUERY TIME".equals(body)?new Date().toString():"bad order";

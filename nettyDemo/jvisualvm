@@ -109,6 +109,8 @@ selector
  
  
  ServerSocketChannel
+ 
+ Java NIO非堵塞技术实际是采取反应器模式
   
   
  
