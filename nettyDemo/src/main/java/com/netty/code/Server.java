@@ -7,6 +7,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import com.netty.TimeServerHandler;
 
@@ -43,7 +45,14 @@ public class Server {
               //ServerBootstrapAcceptor 在客户端连接第一个调用  把客户端的channel 等参数传递给childHandler
               //ServerBootstrapAcceptor 使命就是在服务端启动后 注册自定的 handler
               //第三个 尾 TailHandler
-              ChannelFuture future =   boot.bind(port).sync();
+              ChannelFuture future =   boot.bind(port).sync().addListener(new GenericFutureListener<Future<? super Void>>() {
+
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    if(future.isSuccess()){
+                        System.out.println("启动成功");
+                    }
+                }
+            });
               //等待服务端 端口关闭
               //最终的 调用的委托给 Unsafe
               future.channel().closeFuture().sync();

@@ -9,7 +9,6 @@ public class ServerChannelPreHandler extends ChannelHandlerAdapter{
              System.out.println("channelRead 可读取 ");
              //推动到到下一个handler
              ctx.fireChannelRead(msg);
-             
          };
          
          @Override

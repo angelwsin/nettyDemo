@@ -21,6 +21,7 @@ public class Client{
     }
 
     private void connect(String host, int port) throws Exception{
+        //
         NioEventLoopGroup  bossGroup = new NioEventLoopGroup();
         try{
             Bootstrap  boot = new Bootstrap();
