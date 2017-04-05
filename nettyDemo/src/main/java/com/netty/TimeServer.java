@@ -1,7 +1,5 @@
 package com.netty;
 
-import com.netty.pack.TimeServerChannelHandler;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -47,11 +45,11 @@ public class TimeServer extends CommCompont{
 		protected void initChannel(SocketChannel ch) throws Exception {
 		    
 		    //解决粘包/拆包
-            packDecod(ch);
+           // packDecod(ch);
 		    //没有考虑半包的问题
-          // ch.pipeline().addLast(new TimeServerHandler());
+           ch.pipeline().addLast(new TimeServerHandler());
 		  //模拟粘包/拆包
-		    ch.pipeline().addLast(new TimeServerChannelHandler());
+           // ch.pipeline().addLast(new TimeServerChannelHandler());
 		}
 
 		 

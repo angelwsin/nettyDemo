@@ -4,22 +4,25 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import com.netty.TimeServer;
-import com.netty.pack.TimeServerChannelHandler;
+import com.netty.TimeServerHandler;
 
 public class Server {
     
-    
     public static void main(String[] args)throws Exception {
-        new TimeServer().bind(8902);
+        new Server().bind(8902);
     }
      public void bind(int port)throws Exception{
           //nio线程组  reactor(反应器)线程模型    1.单线程  2.多线程 3.主从多线程
+         
+         //1.初始化线程调到器  netty 实现Executor 自定义执行线程器 ThreadPerTaskExecutor
+         //2.初始化事件执行器的对象池EventExecutor,EventLoop  EventLoop的实现者 NioEventLoop  负责 I/O的操作
+         //每一个 NioEventLoop 维持一个任务队列          任务的管理由SingleThreadEventExecutor实现
+         //每个NioEventLoop 对应一个Selector
+         //EventLoopGroup  管理EventLoop的对象池
           NioEventLoopGroup bossGroup = new NioEventLoopGroup();
           NioEventLoopGroup workGroup = new NioEventLoopGroup();
           
@@ -54,7 +57,7 @@ public class Server {
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
             
-            ChannelPipeline pipeline = ch.pipeline(); //channel中的管道 
+            //  ChannelPipeline pipeline = ch.pipeline(); channel中的管道 
             //管道 以链表的方式 组织 ChannelHandler
             //ChannelHandler 被封装在 DefaultChannelHandlerContext 中
           //DefaultChannelHandlerContext  会对注册的ChannelHandler 进行分组
@@ -65,7 +68,8 @@ public class Server {
              * skipFlags 的标识  的计算 实现了方法就进行  | 按位或操作
              * 
              */
-            pipeline.addLast(new TimeServerChannelHandler());
+            ch.pipeline().addLast(new ServerChannelPreHandler());
+            ch.pipeline().addLast(new TimeServerHandler());
             
              
 
