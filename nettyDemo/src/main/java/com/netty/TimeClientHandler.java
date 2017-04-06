@@ -18,12 +18,16 @@ public class TimeClientHandler extends ChannelHandlerAdapter{
     }
     
     
+     //connect 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         //客户端和服务端连接成功调用
         ctx.writeAndFlush(firstMsg);
     }
+    
+   
 	
+    // read
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //客户端发送信息接收

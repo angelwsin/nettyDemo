@@ -1,7 +1,6 @@
-package com.netty.pack;
+package com.encode.decode.msgPack;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -10,14 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 //模拟 tcp 粘包/拆包
-public class TimeClientChannelHandler extends ChannelHandlerAdapter{
+public class MsgPackClientChannelHandler extends ChannelHandlerAdapter{
 
-    private final byte[] firstMsg;
     private final AtomicInteger count = new AtomicInteger(0);
     
-    public TimeClientChannelHandler() {
-        String   content = "QUERY TIME"+System.getProperty("line.separator");
-        firstMsg = content.getBytes();
+    public MsgPackClientChannelHandler() {
        
    }
     
@@ -30,10 +26,8 @@ public class TimeClientChannelHandler extends ChannelHandlerAdapter{
     //outBound inBound
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-         ByteBuf  buf = null;
          for(int i=0;i<2;i++){
-             buf = Unpooled.copiedBuffer(firstMsg);
-             ctx.writeAndFlush(buf) ;
+             ctx.writeAndFlush("QUERY TIME") ;
          }
     }
     
@@ -47,11 +41,8 @@ public class TimeClientChannelHandler extends ChannelHandlerAdapter{
     }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                  ByteBuf  buf = (ByteBuf) msg;
-                  byte[] b = new byte[buf.readableBytes()];
-                  buf.readBytes(b);
                   count.incrementAndGet();
-                  System.out.println(new String(b)+",count="+count.get());
+                  System.out.println(msg+",count="+count.get());
     }
     
     

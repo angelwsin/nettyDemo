@@ -1,4 +1,4 @@
-package com.netty;
+package com.encode.decode.msgPack;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -10,7 +10,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
-import com.netty.pack.TimeClientChannelHandler;
+import com.netty.CommCompont;
 
 public class TimeClient extends CommCompont{
 
@@ -35,11 +35,11 @@ public class TimeClient extends CommCompont{
                 protected void initChannel(SocketChannel ch) throws Exception {
                     
                     //解决粘包/拆包
-                    packDecod(ch);
+                    msgPack(ch);
                     //没有考虑到半包
                   // ch.pipeline().addLast(new TimeClientHandler());
                     //模拟粘包/拆包
-                    ch.pipeline().addLast(new TimeClientChannelHandler());
+                    ch.pipeline().addLast(new MsgPackClientChannelHandler());
                 }
             });
             

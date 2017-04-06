@@ -41,6 +41,7 @@ public class Client{
             future.channel().closeFuture().sync();
         }finally{
             //优雅的退出
+            
             bossGroup.shutdownGracefully();
         }
     }

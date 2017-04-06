@@ -1,4 +1,4 @@
-package com.netty;
+package com.encode.decode.msgPack;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -12,6 +12,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
+import com.netty.CommCompont;
 import com.netty.pack.TimeServerChannelHandler;
 
 public class TimeServer extends CommCompont{
@@ -59,11 +60,11 @@ public class TimeServer extends CommCompont{
 		protected void initChannel(SocketChannel ch) throws Exception {
 		    
 		    //解决粘包/拆包
-            packDecod(ch);
+		    msgPack(ch);
 		    //没有考虑半包的问题
            //ch.pipeline().addLast(new TimeServerHandler());
 		  //模拟粘包/拆包
-            ch.pipeline().addLast(new TimeServerChannelHandler());
+            ch.pipeline().addLast(new MsgPackServerChannelHandler());
 		}
 
 		 
