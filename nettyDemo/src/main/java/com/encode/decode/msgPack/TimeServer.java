@@ -13,7 +13,6 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import com.netty.CommCompont;
-import com.netty.pack.TimeServerChannelHandler;
 
 public class TimeServer extends CommCompont{
 	

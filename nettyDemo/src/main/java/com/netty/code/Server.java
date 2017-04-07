@@ -7,6 +7,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -23,8 +25,15 @@ public class Server {
          //1.初始化线程调到器  netty 实现Executor 自定义执行线程器 ThreadPerTaskExecutor
          //2.初始化事件执行器的对象池EventExecutor,EventLoop  EventLoop的实现者 NioEventLoop  负责 I/O的操作
          //每一个 NioEventLoop 维持一个任务队列          任务的管理由SingleThreadEventExecutor实现         NioEventLoop单线程的
-         //每个NioEventLoop 对应一个Selector  把要监听的 channel 绑定到 NioEventLoop线程中去  
+         //每个NioEventLoop 对应一个Selector  把要监听的 channel 绑定到 NioEventLoop线程中去    NioEventLoop run方法 轮询 select 同时自定义task和定时task 也由它执行
          //EventLoopGroup  管理EventLoop的对象池    策略递增的索引%对象池  hash
+         
+          /* SocketChannel的子类 NioServerSocketchannel
+          * 1)包含一个 NioEventLoop 用来执行task 通过 SingleThreadEventExecutor.execute(Runnable) 提交task 如果有任务在执行放入任务队列taskQueue
+          * 2)包含一个 EventLoopGroup
+          * 3)unsafe  底层委托 NioMessageUnsafe
+          * 4)pipeline 串联所有的handler
+          */
           NioEventLoopGroup bossGroup = new NioEventLoopGroup();
           NioEventLoopGroup workGroup = new NioEventLoopGroup();
           
@@ -32,9 +41,11 @@ public class Server {
               ServerBootstrap  boot = new ServerBootstrap();
               boot.group(bossGroup, workGroup)
               .channel(NioServerSocketChannel.class) //利用反射生成指定的 channel
-              //tcp缓冲区
+              //内核为套接字连接创建的队列，内核中维护着 已连接队列和未连接队列
               .option(ChannelOption.SO_BACKLOG, 1024)//channel的参数设置
-              //ServerBootstrapAcceptor 触发 ChildChannelHandler 的调用
+              // serversocket的handler
+              .handler(new LoggingHandler(LogLevel.INFO))
+              //ServerBootstrapAcceptor 触发 ChildChannelHandler 的调用   socketchannel的handler
               .childHandler(new ChildChannelHandler());
               
               //绑定端口 同步等待
@@ -45,6 +56,19 @@ public class Server {
               //ServerBootstrapAcceptor 在客户端连接第一个调用  把客户端的channel 等参数传递给childHandler
               //ServerBootstrapAcceptor 使命就是在服务端启动后 注册自定的 handler
               //第三个 尾 TailHandler
+              
+              /*
+               * 服务端创建过程
+               * 1.reactor线程模型的指定 ServerBootstrap 服务端启动的辅助类
+               * 2.根据指定类型创建channel的工厂类
+               * 3.设置参数
+               * 4.设置 handler
+               * 5.bind启动
+               *  1)根据channel的工厂类创建channel 从NioEventLoopGroup选择一个EventLoop
+               *  2)channel注册到EventLoop selector中 返回SelectionKey 用于更新感兴趣的事件
+               *  3)channel  isActive 服务端判断是否已经绑定(对客户端是否连接成功)  绑定成功 触发  handler的Active
+               *  4)绑定端口  循环 3)
+               */
               ChannelFuture future =   boot.bind(port).sync().addListener(new GenericFutureListener<Future<? super Void>>() {
 
                 public void operationComplete(Future<? super Void> future) throws Exception {

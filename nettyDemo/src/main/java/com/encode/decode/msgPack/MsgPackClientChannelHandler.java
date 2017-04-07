@@ -1,6 +1,5 @@
 package com.encode.decode.msgPack;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -26,7 +25,7 @@ public class MsgPackClientChannelHandler extends ChannelHandlerAdapter{
     //outBound inBound
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-         for(int i=0;i<2;i++){
+         for(int i=0;i<100;i++){
              ctx.writeAndFlush("QUERY TIME") ;
          }
     }
