@@ -6,6 +6,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.channels.spi.SelectorProvider;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -13,7 +14,9 @@ public class SelectorTest {
     
     
     public static void main(String[] args)throws Exception {
+    	//底层实现 SelectorProvider.provider().openSelector();
        Selector selector =  Selector.open();
+       
        ServerSocketChannel server = ServerSocketChannel.open();
      //selector 和 channel组合使用必须是非阻塞
        server.configureBlocking(false);

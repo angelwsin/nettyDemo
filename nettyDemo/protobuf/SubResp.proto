@@ -1,0 +1,10 @@
+package  com.encode.decode.protobuf;
+option   java_package = "com.encode.decode.protobuf";
+option   java_outer_classname ="SubResp";
+
+message SubResp{
+required  int32 subReqID = 1;
+required  string respCode = 2;
+required  string desc = 3;
+
+}

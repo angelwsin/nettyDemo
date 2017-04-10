@@ -1,0 +1,11 @@
+package  com.encode.decode.protobuf;
+option   java_package = "com.encode.decode.protobuf";
+option   java_outer_classname ="SubReq";
+
+message SubReq{
+required  int32 subReqID = 1;
+required  string userName = 2;
+required  string productName= 3;
+repeated  string address = 4;
+
+}
