@@ -25,6 +25,13 @@ public class ByteBufTest {
         b.discardReadBytes();
         //写位置
         b.writerIndex();
+        b.markReaderIndex();
+        b.resetReaderIndex();
+        b.markWriterIndex();
+        b.resetWriterIndex();
+        
+        //ByteBuffer 和 ByteBuf转换
+        ByteBuffer buffer =  b.nioBuffer();
         
         
     }
