@@ -1,0 +1,30 @@
+<html>
+
+<head>
+ <title>websocket</title>
+</head>
+<script type="text/javascript">
+
+ var webSocket = new WebSocket("ws://localhost:8080/websocket") ;
+ 
+ webSocket.onmessage = function(event){
+ 
+     alert(event.data);
+ }
+ 
+ webSocket.onopen = function(){
+   alert("websocket connect"+webSocket.readyState);
+   if(webSocket.readyState==WebSocket.OPEN){
+    webSocket.send("hello world");
+   }
+ }
+
+webSocket.onclose = function(){
+
+}
+</script>
+<body>
+
+
+</body>
+</html>
