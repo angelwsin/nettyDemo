@@ -1,13 +1,13 @@
 package com.netty;
 
-import com.encode.decode.msgPack.MsgPackDecoder;
-import com.encode.decode.msgPack.MsgPackEncoder;
-
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
+
+import com.encode.decode.msgPack.MsgPackDecoder;
+import com.encode.decode.msgPack.MsgPackEncoder;
 
 public abstract class CommCompont {
     

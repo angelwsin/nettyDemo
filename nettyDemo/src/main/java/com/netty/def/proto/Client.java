@@ -1,4 +1,4 @@
-package com.netty;
+package com.netty.def.proto;
 
 import java.util.concurrent.TimeUnit;
 
@@ -9,22 +9,21 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
-import com.netty.pack.TimeClientChannelHandler;
-
-public class TimeClient extends CommCompont{
+public class Client{
 
     
     
     
     
      public static void main(String[] args) throws Exception{
-        new TimeClient().connect("localhost",8902);
+        new Client().connect("localhost",8902);
     }
 
-    private void connect(String host, int port) throws Exception{
+    private void connect(final String host, final int port) throws Exception{
         NioEventLoopGroup  bossGroup = new NioEventLoopGroup();
         try{
             Bootstrap  boot = new Bootstrap();
@@ -36,13 +35,11 @@ public class TimeClient extends CommCompont{
 
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
-                    
-                    //解决粘包/拆包
-                    packDecod(ch);
-                    //没有考虑到半包
-                  // ch.pipeline().addLast(new TimeClientHandler());
-                    //模拟粘包/拆包
-                    ch.pipeline().addLast(new TimeClientChannelHandler());
+                   ch.pipeline().addLast(new NettyMessageDecoder(1024*1024, 4, 4));
+                   ch.pipeline().addLast(new NettyMessageEncoder());
+                   ch.pipeline().addLast(new ReadTimeoutHandler(50));
+                   ch.pipeline().addLast(new LoginAuthReqHandler());
+                   ch.pipeline().addLast(new HeartBeatReqHandler());
                 }
             });
             
@@ -57,8 +54,18 @@ public class TimeClient extends CommCompont{
                 }
             });
         }finally{
-            //优雅的退出
-            bossGroup.shutdownGracefully(2000, 30000, TimeUnit.DAYS);
+            //断时重连
+            bossGroup.execute(new Runnable() {
+                
+                public void run() {
+                    try {
+                        TimeUnit.SECONDS.sleep(5);
+                        connect(host, port);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
     
