@@ -30,6 +30,11 @@ public class TimeServer extends CommCompont{
 			  boot.group(bossGroup, workGroup)
 			  .channel(NioServerSocketChannel.class)
 			  //tcp缓冲区
+			  //backlog 内核为此套接口排队的最大连接数
+			  //给定的监听端口 内核维护两个队列 未连接队列和已连接队列
+			  //划分的已经根据三次握手  当第一次握手创建放在 未连接队列 直到三次握手完成从未连接队列
+			  //移动到已连接队列的队尾  当进程调用 accept 从已连接的对头移除一个给进程
+			  //当已连接的队列为空 进程则睡眠 直到已连接队列有值 则唤醒
 			  .option(ChannelOption.SO_BACKLOG, 1024)
 			  .handler(new LoggingHandler(LogLevel.DEBUG))
 			  .childHandler(new ChildChannelHandler());
