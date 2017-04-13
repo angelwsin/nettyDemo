@@ -8,6 +8,8 @@ import io.netty.channel.ChannelPromise;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.util.CaseUtils;
+
 
 //模拟 tcp 粘包/拆包
 public class TimeClientChannelHandler extends ChannelHandlerAdapter{
@@ -47,11 +49,9 @@ public class TimeClientChannelHandler extends ChannelHandlerAdapter{
     }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                  ByteBuf  buf = (ByteBuf) msg;
-                  byte[] b = new byte[buf.readableBytes()];
-                  buf.readBytes(b);
                   count.incrementAndGet();
-                  System.out.println(new String(b)+",count="+count.get());
+                  String x = CaseUtils.caseTo(msg);
+                  System.out.println(x+",count="+count.get());
     }
     
     
