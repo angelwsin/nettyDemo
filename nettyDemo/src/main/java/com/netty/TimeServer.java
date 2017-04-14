@@ -132,7 +132,7 @@ public class TimeServer extends CommCompont{
 	  *    
 	  *    
 	  *    2)ScheduledFutureTask 定时任务
-	  *    3)自定义task
+	  *    3)NioTask
 	  *    
 	  *      
 	  *      
