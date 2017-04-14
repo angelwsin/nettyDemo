@@ -14,6 +14,7 @@ public class HeartBeatRespHandler extends ChannelHandlerAdapter{
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
        
            NettyMessage nMsg =  CaseUtils.caseTo(msg);
+           System.out.println(nMsg);
            if(nMsg!=null&&nMsg.getHeads().getType()==MessageType.HEARTBET_REQ.getVal()){
                ctx.writeAndFlush(buidMsg());
            }else{
@@ -25,7 +26,13 @@ public class HeartBeatRespHandler extends ChannelHandlerAdapter{
         NettyMessage msg = new NettyMessage();
         Head head = new Head();
         head.setType(MessageType.HEARTBET_RESP.getVal());
+        msg.setHeads(head);
         return msg;
+    }
+    
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
     }
 
 }

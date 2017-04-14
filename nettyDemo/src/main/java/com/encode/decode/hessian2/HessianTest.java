@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 
 import com.caucho.hessian.io.HessianInput;
 import com.caucho.hessian.io.HessianOutput;
+import com.netty.def.proto.Head;
+import com.netty.def.proto.NettyMessage;
 
 public class HessianTest {
     
@@ -15,6 +17,11 @@ public class HessianTest {
         HessianTest test = new HessianTest();
         User u = (User) test.decode(test.encode(user));
         System.out.println(u.getUserName());
+        NettyMessage msg  = new NettyMessage();
+        msg.setBody((byte)1);
+        msg.setHeads(new Head());
+        NettyMessage msgH = (NettyMessage) test.decode(test.encode(msg));
+        System.out.println(msgH.getBody());
     }
     
     

@@ -17,7 +17,7 @@ public class HeartBeatReqHandler extends ChannelHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                         NettyMessage nMsg =    CaseUtils.caseTo(msg);
                         //定时检测心跳
-                        
+                        System.out.println(nMsg);
                         if(nMsg.getHeads()!=null&&nMsg.getHeads().getType()==MessageType.LOGIN_RESP.getVal()){
                             heartHeat=  ctx.executor().scheduleAtFixedRate(new HeartBeatTask(ctx), 0, 5000, TimeUnit.MILLISECONDS);
                         }else if(nMsg.getHeads()!=null&&nMsg.getHeads().getType()==MessageType.HEARTBET_RESP.getVal()){
@@ -36,6 +36,7 @@ public class HeartBeatReqHandler extends ChannelHandlerAdapter {
            heartHeat = null;
        }
        ctx.fireExceptionCaught(cause);
+       cause.printStackTrace();
     }
     
     class HeartBeatTask implements Runnable{

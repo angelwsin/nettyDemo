@@ -1,10 +1,13 @@
 package com.netty.def.proto;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Head {
+public class Head implements Serializable{
     
+    /**  */
+    private static final long serialVersionUID = 1L;
     private int crcCode;
     private int length;
     private long sessionID;

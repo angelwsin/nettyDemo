@@ -19,8 +19,9 @@ public class LoginAuthReqHandler extends ChannelHandlerAdapter{
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                 NettyMessage nMsg =  CaseUtils.caseTo(msg);
+                System.out.println(nMsg);
                 if(nMsg.getHeads()!=null&&nMsg.getHeads().getType()==MessageType.LOGIN_RESP.getVal()){
-                  Byte loginResp =  CaseUtils.caseTo(nMsg.getBody());
+                  Integer loginResp =  CaseUtils.caseTo(nMsg.getBody());
                   if(loginResp!=0){
                       //握手失败
                      ctx.close();
@@ -44,6 +45,7 @@ public class LoginAuthReqHandler extends ChannelHandlerAdapter{
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         ctx.close();
         ctx.fireExceptionCaught(cause);
+        cause.printStackTrace();
     }
 
 }

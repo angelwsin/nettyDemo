@@ -17,6 +17,7 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter{
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
              NettyMessage nMsg = CaseUtils.caseTo(msg);
+             System.out.println(nMsg);
              if(nMsg.getHeads()!=null&&nMsg.getHeads().getType()==MessageType.LOGIN_REQ.getVal()){
                  InetSocketAddress addres = CaseUtils.caseTo(ctx.channel().remoteAddress());
                  //重复登录
@@ -57,6 +58,7 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter{
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
        ctx.close();
        ctx.fireExceptionCaught(cause);
+       cause.printStackTrace();
     }
 
 }

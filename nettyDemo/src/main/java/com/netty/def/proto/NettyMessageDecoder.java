@@ -28,7 +28,7 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder{
         head.setSessionID(buf.readLong());
         head.setPriority(buf.readByte());
         head.setType(buf.readByte());
-        
+        msg.setHeads(head);
         int size = buf.readInt();
         if(size>0){
            Map<String,Object> att = new HashMap<String,Object>();
@@ -43,9 +43,9 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder{
            head.setAttach(att);
         }
         
-        if(in.readableBytes()>4){
-            byte[] val = new byte[in.readableBytes()];
-            in.readBytes(val);
+        if(buf.readableBytes()>0){
+            byte[] val = new byte[buf.readableBytes()];
+            buf.readBytes(val);
             msg.setBody(decode(val));
         }
         return msg;
