@@ -179,6 +179,14 @@ public class TimeServer extends CommCompont{
 	  *    isSuccess =false         成功isDone = true  isSuccess =true
 	  *    isCancelled =false       取消isDone = true  isCancelled =true
 	  *    cause  = null
+	  *    
+	  *    7.心跳检测
+	  *    1)ping-pong 请求响应
+	  *    2)ping-ping型  双向心跳检测
+	  *    netty 提供三种检测
+	  *    >读空闲  ReadTimeoutHandler
+	  *    >写空闲  WriteTimeoutHandler
+	  *    >读写空闲检测 IdleStateHandler
 	  *      
 	  *      
 	  *      
