@@ -157,7 +157,7 @@ public class TimeServer extends CommCompont{
 	  *     ChannelHandlerContext.disconnect(ChannelPromise promise) 断开连接事件
 	  *     ChannelHandlerContext.close(ChannelPromise promise) 关闭当前channel
 	  *     
-	  *    5.拆包和组包（半包问题）
+	  *    5.拆包和组包（半包问题）cumulation 记录半包读
 	  *     解决
 	  *     1）固定长度
 	  *     2）回车换行分割 LineBasedFrameDecoder
@@ -202,7 +202,7 @@ public class TimeServer extends CommCompont{
             } finally {
                 inFlush0 = false;
             }
-	  *      
+	  *     
 	  *      
 	  *      
 	  *            ServerBootstrap.initAndRegister()           AbstractChannel.doRegister()
