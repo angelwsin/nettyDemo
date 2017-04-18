@@ -1,4 +1,4 @@
-package com.netty;
+package com.netty.optimization;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -12,7 +12,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
-import com.netty.pack.TimeServerChannelHandler;
+import com.netty.CommCompont;
 
 public class TimeServer extends CommCompont{
 	
@@ -70,7 +70,7 @@ public class TimeServer extends CommCompont{
 		    //没有考虑半包的问题
            //ch.pipeline().addLast(new TimeServerHandler());
 		  //模拟粘包/拆包
-            ch.pipeline().addLast(new TimeServerChannelHandler());
+            ch.pipeline().addLast(new ServerChannelHandler());
 		}
 
 		 
@@ -188,20 +188,6 @@ public class TimeServer extends CommCompont{
 	  *    >读空闲  ReadTimeoutHandler
 	  *    >写空闲  WriteTimeoutHandler
 	  *    >读写空闲检测 IdleStateHandler
-	  *    8.ChannelHandlerContext.flush() 半包的处理
-	  *    ChannelOutboundBuffer 循环写
-	  *    // A circular buffer used to store messages.  The buffer is arranged such that:  flushed <= unflushed <= tail.  The
-      *    // flushed messages are stored in the range [flushed, unflushed).  Unflushed messages are stored in the range
-      *    // [unflushed, tail)
-      *    
-      *     当在写时 网络出现异常    服务端会清除所有未发送的消息
-      *     try {
-                doWrite(outboundBuffer);
-            } catch (Throwable t) {
-                outboundBuffer.failFlushed(t); //remove()
-            } finally {
-                inFlush0 = false;
-            }
 	  *      
 	  *      
 	  *      
