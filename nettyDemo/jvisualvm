@@ -191,8 +191,16 @@ WLAN(Wireless Local Area Network)（无线局域网）
   
  
  
+ HTTP的神器 Fiddler和Charles debugger
+ 
+ wireshark
  
  
+ 数据链路层则负责 MAC地址
+ 网络层负责 IP地址
+路由器 工作在 网络层  
+数据链路层设备（如交换机）
+IP和MAC地址这种映射关系由ARP（Address Resolution Protocol，地址解析协议）协议完成。
  
  
  
