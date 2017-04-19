@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
@@ -76,9 +77,12 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object>{
     @SuppressWarnings("static-access")
     private void processHttpRequest(ChannelHandlerContext ctx, FullHttpRequest msg) {
         System.out.println(msg);
-        if(!msg.getDecoderResult().isSuccess()||!"websocket".equals(msg.headers().get("Upgrade"))){
+       
+        if (!msg.getDecoderResult().isSuccess()
+            || !HttpHeaders.Values.WEBSOCKET.toString().toLowerCase()
+                .equals(msg.headers().get( HttpHeaders.Values.UPGRADE.toString()))) {
             SendError(ctx, HttpResponseStatus.BAD_REQUEST);
-            return ;
+            return;
         }
         
         WebSocketServerHandshakerFactory  factory = new WebSocketServerHandshakerFactory("ws://localhost:8080/websocket", null, false);
