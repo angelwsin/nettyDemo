@@ -3,6 +3,7 @@ package com.netty.def.proto;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -40,11 +41,12 @@ public class Client{
                    ch.pipeline().addLast(new ReadTimeoutHandler(50));
                    ch.pipeline().addLast(new LoginAuthReqHandler());
                    ch.pipeline().addLast(new HeartBeatReqHandler());
+                   ch.pipeline().addLast(new RpcClientHandler());
                 }
             });
             
             ChannelFuture future =  boot.connect(host, port).sync();
-            
+            new RCPClient(future.channel()).start();
             future.channel().closeFuture().sync().addListener(new GenericFutureListener<Future<? super Void>>() {
 
                 public void operationComplete(Future<? super Void> future) throws Exception {
@@ -70,5 +72,42 @@ public class Client{
     }
     
     
+     class RCPClient extends Thread{
+         Channel  channel ;
+         
+          public RCPClient(Channel channel) {
+            this.channel = channel;
+        }
+
+        @Override
+        public void run() {
+            NettyMessage msg = new NettyMessage();
+            Head head = new Head();
+            head.setType(MessageType.RPC_REQ.getVal());
+            msg.setHeads(head);
+            RpcRequest req = new RpcRequest();
+            req.setMethodName("say");
+            req.setServiceName("rpcService");
+            req.setMethodSign(new String[]{String.class.getName()});
+            req.setParams(new String[]{"rpc"});
+            msg.setBody(req);
+           channel.writeAndFlush(msg).addListener(new GenericFutureListener<Future<? super Void>>() {
+
+            public void operationComplete(Future<? super Void> future) throws Exception {
+                 if(future.isSuccess()){
+                     new Thread(){
+                         public void run() {
+                             RpcClientHandler hand =  channel.pipeline().get(RpcClientHandler.class);
+                             RpcResponse rs =  hand.getResult();
+                             System.out.println(rs.getResult());
+                         };
+                     }.start();
+                 }
+            }
+        });
+           
+          
+        }
+     }
     
 }

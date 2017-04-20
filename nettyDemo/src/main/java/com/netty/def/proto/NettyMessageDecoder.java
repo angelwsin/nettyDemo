@@ -56,4 +56,8 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder{
         HessianInput hi = new HessianInput(is);
         return hi.readObject();
     }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+       cause.printStackTrace();
+    }
 }

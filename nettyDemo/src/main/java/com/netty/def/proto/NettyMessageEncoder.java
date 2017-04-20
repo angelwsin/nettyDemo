@@ -48,4 +48,9 @@ public class NettyMessageEncoder extends MessageToMessageEncoder<NettyMessage>{
         buf.writeBytes(os.toByteArray());
     }
 
+    
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+       cause.printStackTrace();
+    }
 }

@@ -61,6 +61,7 @@ public class Server {
             ch.pipeline().addLast(new ReadTimeoutHandler(50));
             ch.pipeline().addLast(new LoginAuthRespHandler());
             ch.pipeline().addLast(new HeartBeatRespHandler());
+            ch.pipeline().addLast(new RpcServiceHanlder());
 		    
 		}
 
