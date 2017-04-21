@@ -174,7 +174,7 @@ public class TimeServer extends CommCompont{
 	  *     uncompleted  非失败 非成功 非取消
 	  *     completed     失败      成功    取消
 	  *    异步I/O超时：1.tcp层面的超时 2.业务层面的超时 
-	  *    
+	  *      根据 result 的值
 	  *    uncompleted             completed
 	  *    isDone = false          失败 isDone = true  cause not null
 	  *    isSuccess =false         成功isDone = true  isSuccess =true

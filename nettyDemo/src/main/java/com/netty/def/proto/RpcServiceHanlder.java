@@ -31,6 +31,7 @@ public class RpcServiceHanlder extends ChannelHandlerAdapter{
                  Head head = new Head();
                  head.setType(MessageType.RPC_RESP.getVal());
                  mResp.setHeads(head);
+                 resp.setUniqueId(req.getUniqueId());
                  if(obj==null){
                      resp.setResult(new RpcException("服务不存在"));
                      mResp.setBody(resp);

@@ -11,6 +11,7 @@ public class RpcRequest implements Serializable {
      private String methodName;
      private Object[] params;
      private String[] methodSign;
+     private Long     uniqueId;
     public String getServiceName() {
         return serviceName;
     }
@@ -34,6 +35,12 @@ public class RpcRequest implements Serializable {
     }
     public void setMethodSign(String[] methodSign) {
         this.methodSign = methodSign;
+    }
+    public Long getUniqueId() {
+        return uniqueId;
+    }
+    public void setUniqueId(Long uniqueId) {
+        this.uniqueId = uniqueId;
     }
      
      

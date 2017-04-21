@@ -1,5 +1,6 @@
 package com.netty.def.proto;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.Bootstrap;
@@ -16,9 +17,22 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 public class Client{
 
+    static ChannelFuture future ;
     
-    
-    
+     static{
+         
+           new Thread(){
+               public void run() {
+                   try {
+                   new Client().connect("localhost",8902); 
+                   } catch (Exception e) {
+                       e.printStackTrace();
+                    }
+               };
+           }.start();
+           
+        
+     }
     
      public static void main(String[] args) throws Exception{
         new Client().connect("localhost",8902);
@@ -45,8 +59,15 @@ public class Client{
                 }
             });
             
-            ChannelFuture future =  boot.connect(host, port).sync();
-            new RCPClient(future.channel()).start();
+             future =  boot.connect(host, port).sync().addListener(new GenericFutureListener<Future<? super Void>>() {
+
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                     if(future.isSuccess()){
+                         ClientFuture.latch.countDown();
+                     }
+                }
+            });
+           
             future.channel().closeFuture().sync().addListener(new GenericFutureListener<Future<? super Void>>() {
 
                 public void operationComplete(Future<? super Void> future) throws Exception {
@@ -85,27 +106,32 @@ public class Client{
             Head head = new Head();
             head.setType(MessageType.RPC_REQ.getVal());
             msg.setHeads(head);
-            RpcRequest req = new RpcRequest();
+            final RpcRequest req = new RpcRequest();
             req.setMethodName("say");
             req.setServiceName("rpcService");
             req.setMethodSign(new String[]{String.class.getName()});
             req.setParams(new String[]{"rpc"});
+            req.setUniqueId(Long.valueOf(10));
             msg.setBody(req);
+            final CallBackPromise clall = new CallBackPromise();
            channel.writeAndFlush(msg).addListener(new GenericFutureListener<Future<? super Void>>() {
 
             public void operationComplete(Future<? super Void> future) throws Exception {
                  if(future.isSuccess()){
-                     new Thread(){
-                         public void run() {
-                             RpcClientHandler hand =  channel.pipeline().get(RpcClientHandler.class);
-                             RpcResponse rs =  hand.getResult();
-                             System.out.println(rs.getResult());
-                         };
-                     }.start();
+                     RpcClientHandler hand =  channel.pipeline().get(RpcClientHandler.class);
+                     Object[] queue = new Object[2];
+                     queue[0] = req;
+                     queue[1] = clall;
+                     hand.requestes.put(req.getUniqueId(), queue);
                  }
             }
+            
         });
-           
+           try {
+            System.out.println(clall.get().getResult());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
           
         }
      }
